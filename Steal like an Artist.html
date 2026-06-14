@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>훔쳐라 아티스트처럼 — Austin Kleon</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;700&family=Black+Han+Sans&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #1a1410; --paper: #f5f0e8; --torn: #e8e0cc;
+  --accent: #d64e12; --accent2: #2b4a8c; --faded: #9a8f7a; --yellow: #f2c94c;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--paper); color: var(--ink); font-family: 'Noto Serif KR', serif; overflow-x: hidden; cursor: crosshair; padding-top: 64px; }
+body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:9999; opacity:0.5; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  height: 64px; background: var(--ink);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px;
+  border-bottom: 2px solid var(--accent);
+  transition: background 0.3s;
+}
+nav.scrolled { background: rgba(26,20,16,0.97); backdrop-filter: blur(8px); }
+.nav-logo {
+  font-family: 'Black Han Sans', sans-serif; font-size: 20px;
+  color: var(--paper); text-decoration: none; letter-spacing: 1px;
+}
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 6px; align-items: center; }
+.nav-links a {
+  font-family: 'Space Mono', monospace; font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(245,240,232,0.6); text-decoration: none;
+  padding: 8px 14px; border: 1px solid transparent;
+  transition: all 0.2s; position: relative;
+}
+.nav-links a:hover, .nav-links a.active {
+  color: var(--paper); border-color: rgba(245,240,232,0.2);
+}
+.nav-links a.active::after {
+  content: ''; position: absolute; bottom: -2px; left: 14px; right: 14px;
+  height: 2px; background: var(--accent);
+}
+.nav-links a.nav-cta {
+  background: var(--accent); color: var(--paper); border-color: var(--accent);
+}
+.nav-links a.nav-cta:hover { background: #bf420e; }
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+.hamburger span { display: block; width: 22px; height: 2px; background: var(--paper); transition: all 0.3s; }
+.mobile-menu { display: none; position: fixed; top: 64px; left: 0; right: 0; background: var(--ink); padding: 24px; flex-direction: column; gap: 4px; z-index: 999; border-bottom: 2px solid var(--accent); }
+.mobile-menu.open { display: flex; }
+.mobile-menu a { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--paper); text-decoration: none; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.08); letter-spacing: 2px; }
+
+/* ── TICKER ── */
+.ticker { background: var(--accent); padding: 12px 0; overflow: hidden; white-space: nowrap; }
+.ticker-inner { display: inline-block; animation: ticker 18s linear infinite; }
+.ticker-inner span { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 3px; color: var(--paper); text-transform: uppercase; padding: 0 32px; }
+.ticker-inner span::after { content: '✦'; margin-left: 32px; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ── HERO ── */
+.hero { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; position: relative; overflow: hidden; }
+.hero-left { background: var(--ink); display: flex; flex-direction: column; justify-content: center; padding: 80px 60px; position: relative; overflow: hidden; }
+.hero-left::before { content:''; position:absolute; top:-100px; right:-100px; width:400px; height:400px; border-radius:50%; background:var(--accent); opacity:0.12; animation:pulse 6s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+.stamp { display:inline-block; font-family:'Space Mono',monospace; font-size:11px; letter-spacing:4px; text-transform:uppercase; color:var(--accent); border:1.5px solid var(--accent); padding:6px 14px; margin-bottom:40px; transform:rotate(-1deg); width:fit-content; }
+.hero-title { font-family:'Black Han Sans',sans-serif; font-size:clamp(52px,7vw,88px); line-height:0.95; color:var(--paper); margin-bottom:8px; position:relative; z-index:1; }
+.hero-title span { color:var(--accent); display:block; }
+.hero-subtitle { font-family:'Space Mono',monospace; font-size:13px; color:var(--faded); letter-spacing:1px; margin-top:28px; line-height:1.8; }
+.hero-author { font-family:'Space Mono',monospace; font-size:12px; color:var(--yellow); letter-spacing:3px; margin-top:48px; text-transform:uppercase; }
+.hero-right { background:var(--paper); display:flex; align-items:center; justify-content:center; padding:60px; position:relative; overflow:hidden; }
+
+/* ── HEIST / RANSOM COLLAGE ── */
+.heist-stage { position:relative; width:100%; max-width:420px; aspect-ratio:1/1.05; }
+
+.heist-board {
+  position:absolute; inset:0;
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.025) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.025) 0 1px, transparent 1px 28px),
+    var(--torn);
+  border:1px solid var(--torn);
+  box-shadow: inset 0 0 60px rgba(0,0,0,0.06);
+}
+
+/* scattered scraps */
+.scrap {
+  position:absolute;
+  background:var(--paper);
+  border:1px solid rgba(0,0,0,0.08);
+  box-shadow:3px 4px 10px rgba(0,0,0,0.18);
+  font-family:'Noto Serif KR',serif;
+  display:flex; align-items:center; justify-content:center;
+  text-align:center; padding:10px;
+  transition:transform 0.4s ease;
+}
+.scrap:hover { transform:scale(1.05) rotate(0deg) !important; z-index:20; }
+
+.scrap-1 { top:6%; left:8%; width:42%; height:26%; transform:rotate(-7deg); font-size:13px; color:var(--faded); line-height:1.6; font-family:'Space Mono',monospace; letter-spacing:1px; }
+.scrap-2 { top:4%; right:6%; width:34%; height:34%; transform:rotate(6deg); background:var(--accent2); color:var(--paper); font-family:'Black Han Sans',sans-serif; font-size:30px; }
+.scrap-3 { top:38%; left:4%; width:30%; height:30%; transform:rotate(4deg); background:var(--yellow); font-family:'Black Han Sans',sans-serif; font-size:42px; }
+.scrap-4 { bottom:6%; left:30%; width:46%; height:22%; transform:rotate(-3deg); font-family:'Space Mono',monospace; font-size:11px; letter-spacing:2px; color:var(--ink); line-height:1.7; text-align:left; align-items:flex-start; justify-content:flex-start; padding:14px; }
+.scrap-5 { top:46%; right:4%; width:36%; height:24%; transform:rotate(8deg); background:var(--ink); color:var(--paper); font-family:'Black Han Sans',sans-serif; font-size:18px; line-height:1.3; }
+
+/* tape */
+.tape {
+  position:absolute;
+  background:rgba(242,201,76,0.55);
+  box-shadow:0 1px 3px rgba(0,0,0,0.15);
+}
+.tape-1 { width:70px; height:22px; top:1%; left:14%; transform:rotate(-40deg); }
+.tape-2 { width:60px; height:20px; top:32%; right:18%; transform:rotate(35deg); }
+.tape-3 { width:80px; height:22px; bottom:14%; left:42%; transform:rotate(-20deg); }
+
+/* ransom-note headline */
+.ransom-note {
+  position:absolute; left:50%; top:50%;
+  transform:translate(-50%,-50%) rotate(-4deg);
+  background:var(--paper);
+  border:2px solid var(--ink);
+  box-shadow:6px 6px 0 var(--accent), 10px 10px 30px rgba(0,0,0,0.25);
+  padding:22px 28px;
+  width:78%;
+  text-align:center;
+  z-index:10;
+  animation:wobble 5s ease-in-out infinite;
+}
+@keyframes wobble {
+  0%,100% { transform:translate(-50%,-50%) rotate(-4deg); }
+  50% { transform:translate(-50%,-50%) rotate(-2deg); }
+}
+.ransom-note .word {
+  display:inline-block; margin:3px 4px;
+  font-weight:700;
+}
+.ransom-note .f1 { font-family:'Black Han Sans',sans-serif; font-size:30px; color:var(--ink); }
+.ransom-note .f2 { font-family:'Noto Serif KR',serif; font-size:26px; color:var(--accent); background:var(--yellow); padding:0 6px; transform:rotate(-3deg); }
+.ransom-note .f3 { font-family:'Space Mono',monospace; font-size:22px; color:var(--paper); background:var(--ink); padding:2px 8px; transform:rotate(2deg); }
+.ransom-note .f4 { font-family:'Black Han Sans',sans-serif; font-size:30px; color:var(--accent2); }
+
+.stolen-stamp {
+  position:absolute; bottom:-14px; right:-22px;
+  font-family:'Space Mono',monospace; font-size:13px; letter-spacing:6px;
+  color:var(--accent); border:2.5px solid var(--accent);
+  padding:8px 14px; transform:rotate(-12deg);
+  background:rgba(245,240,232,0.9);
+  z-index:15;
+  animation:stampPulse 3s ease-in-out infinite;
+}
+@keyframes stampPulse {
+  0%,100% { opacity:1; }
+  50% { opacity:0.6; }
+}
+
+.fingerprint {
+  position:absolute; width:60px; height:60px;
+  border:3px solid var(--ink); border-radius:50%;
+  opacity:0.08;
+}
+.fingerprint::before, .fingerprint::after {
+  content:''; position:absolute; inset:8px;
+  border:2px solid var(--ink); border-radius:50%;
+}
+.fingerprint::after { inset:18px; }
+.fp-1 { top:12px; right:60px; }
+.fp-2 { bottom:30px; left:10px; transform:scale(0.7); }
+
+/* ── MANIFESTO ── */
+.manifesto { padding:120px 80px; background:var(--accent); position:relative; overflow:hidden; }
+.manifesto::before { content:'"'; position:absolute; top:-40px; left:40px; font-size:320px; font-family:'Black Han Sans',sans-serif; color:rgba(0,0,0,0.08); line-height:1; pointer-events:none; }
+.manifesto-text { max-width:780px; margin:0 auto; font-family:'Black Han Sans',sans-serif; font-size:clamp(28px,4vw,52px); color:var(--paper); line-height:1.3; position:relative; z-index:1; }
+.manifesto-text small { display:block; font-family:'Space Mono',monospace; font-size:13px; font-weight:400; margin-top:24px; opacity:0.75; letter-spacing:1px; }
+
+/* ── SECTION LABEL ── */
+.section-label { font-family:'Space Mono',monospace; font-size:11px; letter-spacing:5px; text-transform:uppercase; color:var(--faded); margin-bottom:60px; display:flex; align-items:center; gap:16px; }
+.section-label::after { content:''; flex:1; height:1px; background:var(--torn); }
+
+/* ── PRINCIPLES ── */
+.principles { padding:120px 80px; background:var(--paper); }
+.principles-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:0; }
+.principle-card { border:1px solid var(--torn); padding:40px 36px; position:relative; transition:background 0.3s,transform 0.3s; cursor:pointer; }
+.principle-card:hover { background:var(--ink); transform:translate(-3px,-3px); z-index:2; box-shadow:3px 3px 0 var(--accent); }
+.principle-card:hover .principle-num { color:var(--accent); }
+.principle-card:hover .principle-title { color:var(--paper); }
+.principle-card:hover .principle-desc { color:var(--faded); }
+.principle-num { font-family:'Space Mono',monospace; font-size:11px; letter-spacing:3px; color:var(--faded); margin-bottom:16px; transition:color 0.3s; }
+.principle-title { font-family:'Black Han Sans',sans-serif; font-size:22px; line-height:1.2; margin-bottom:14px; transition:color 0.3s; }
+.principle-desc { font-size:14px; line-height:1.8; color:#6b6054; transition:color 0.3s; }
+
+/* ── QUOTES ── */
+.quote-strip { background:var(--ink); padding:100px 80px; position:relative; overflow:hidden; }
+.quote-strip::after { content:'STEAL'; position:absolute; right:-20px; top:50%; transform:translateY(-50%) rotate(90deg); font-family:'Black Han Sans',sans-serif; font-size:180px; color:rgba(255,255,255,0.03); pointer-events:none; }
+.quotes-container { max-width:900px; margin:0 auto; }
+.big-quote { font-family:'Noto Serif KR',serif; font-size:clamp(18px,2.5vw,28px); color:var(--paper); line-height:1.7; padding:36px 0 36px 28px; border-top:1px solid rgba(255,255,255,0.1); position:relative; }
+.big-quote::before { content:''; position:absolute; left:0; top:36px; bottom:0; width:3px; background:var(--accent); }
+
+/* ── AUTHOR ── */
+.author-section { padding:120px 80px; background:var(--torn); display:grid; grid-template-columns:1fr 2fr; gap:80px; align-items:center; }
+.author-portrait { width:100%; aspect-ratio:1; background:var(--ink); border-radius:50% 30% 50% 30%/30% 50% 30% 50%; display:flex; align-items:center; justify-content:center; font-size:80px; animation:morph 8s ease-in-out infinite; }
+@keyframes morph { 0%,100%{border-radius:50% 30% 50% 30%/30% 50% 30% 50%} 33%{border-radius:30% 50% 30% 50%/50% 30% 50% 30%} 66%{border-radius:40% 60% 40% 60%/60% 40% 60% 40%} }
+.author-name { font-family:'Black Han Sans',sans-serif; font-size:42px; margin-bottom:16px; }
+.author-bio { font-size:16px; line-height:1.9; color:#5a5040; }
+
+/* ── CTA ── */
+.cta-section { background:var(--ink); padding:120px 80px; text-align:center; position:relative; overflow:hidden; }
+.cta-bg-text { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'Black Han Sans',sans-serif; font-size:300px; color:rgba(255,255,255,0.02); white-space:nowrap; pointer-events:none; user-select:none; }
+.cta-label { font-family:'Space Mono',monospace; font-size:11px; letter-spacing:5px; color:var(--accent); text-transform:uppercase; margin-bottom:32px; }
+.cta-title { font-family:'Black Han Sans',sans-serif; font-size:clamp(36px,5vw,72px); color:var(--paper); margin-bottom:48px; line-height:1.1; }
+.cta-buttons { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+.btn { font-family:'Space Mono',monospace; font-size:13px; letter-spacing:2px; text-transform:uppercase; padding:16px 40px; border:none; cursor:pointer; text-decoration:none; transition:all 0.2s; display:inline-block; }
+.btn-primary { background:var(--accent); color:var(--paper); }
+.btn-primary:hover { background:var(--paper); color:var(--ink); transform:translate(-3px,-3px); box-shadow:3px 3px 0 var(--accent); }
+.btn-outline { background:transparent; color:var(--paper); border:1.5px solid rgba(255,255,255,0.3); }
+.btn-outline:hover { background:var(--paper); color:var(--ink); border-color:var(--paper); }
+
+/* ── FOOTER ── */
+footer { background:var(--ink); padding:40px 80px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.08); }
+footer p { font-family:'Space Mono',monospace; font-size:11px; color:var(--faded); letter-spacing:1px; }
+.footer-logo { font-family:'Black Han Sans',sans-serif; font-size:22px; color:var(--paper); }
+
+/* ── INTERACTIVE: NEWSPAPER BLACKOUT ── */
+.blackout-section { padding:100px 80px; background:#f0ebe0; }
+.blackout-area { max-width:800px; margin:0 auto; }
+.blackout-instruction { font-family:'Space Mono',monospace; font-size:12px; color:var(--faded); letter-spacing:2px; margin-bottom:32px; text-align:center; text-transform:uppercase; }
+.blackout-text { font-size:17px; line-height:2.4; background:var(--paper); padding:40px; border:1px solid var(--torn); box-shadow:4px 4px 0 var(--torn); }
+.blackout-text .word { display:inline-block; padding:2px 5px; border-radius:2px; cursor:pointer; transition:background 0.15s,color 0.15s; user-select:none; margin:1px; }
+.blackout-text .word:hover { background:rgba(214,78,18,0.15); }
+.blackout-text .word.blacked { background:var(--ink); color:var(--ink); border-radius:1px; }
+.blackout-text .word.kept { background:var(--yellow); color:var(--ink); font-weight:700; }
+.blackout-controls { display:flex; gap:12px; margin-top:24px; flex-wrap:wrap; }
+.blackout-btn { font-family:'Space Mono',monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; padding:10px 20px; border:1.5px solid var(--ink); background:transparent; cursor:pointer; transition:all 0.2s; }
+.blackout-btn:hover { background:var(--ink); color:var(--paper); }
+.blackout-btn.active { background:var(--accent); color:var(--paper); border-color:var(--accent); }
+.blackout-poem { margin-top:24px; padding:24px; background:var(--ink); color:var(--paper); font-family:'Noto Serif KR',serif; font-size:18px; line-height:2; min-height:60px; display:none; border-left:4px solid var(--accent); }
+.blackout-poem.visible { display:block; }
+
+/* ── INTERACTIVE: CREATIVITY TEST ── */
+.quiz-section { padding:100px 80px; background:var(--ink); }
+.quiz-wrap { max-width:700px; margin:0 auto; }
+.quiz-q { font-family:'Black Han Sans',sans-serif; font-size:clamp(22px,3vw,34px); color:var(--paper); margin-bottom:40px; line-height:1.4; min-height:80px; }
+.quiz-progress { display:flex; gap:8px; margin-bottom:48px; }
+.quiz-dot { height:4px; flex:1; background:rgba(255,255,255,0.15); border-radius:2px; transition:background 0.3s; }
+.quiz-dot.done { background:var(--accent); }
+.quiz-dot.current { background:var(--yellow); }
+.quiz-options { display:grid; gap:12px; }
+.quiz-opt { font-family:'Noto Serif KR',serif; font-size:15px; padding:18px 24px; border:1px solid rgba(255,255,255,0.15); background:transparent; color:var(--paper); cursor:pointer; text-align:left; transition:all 0.2s; }
+.quiz-opt:hover { border-color:var(--accent); background:rgba(214,78,18,0.1); transform:translateX(6px); }
+.quiz-opt.selected { border-color:var(--yellow); background:rgba(242,201,76,0.12); }
+.quiz-result { display:none; text-align:center; padding:40px 0; }
+.quiz-result.visible { display:block; }
+.quiz-result-type { font-family:'Black Han Sans',sans-serif; font-size:clamp(32px,5vw,64px); color:var(--accent); margin-bottom:20px; }
+.quiz-result-desc { font-size:16px; color:rgba(245,240,232,0.8); line-height:1.9; max-width:500px; margin:0 auto 32px; }
+.quiz-restart { font-family:'Space Mono',monospace; font-size:12px; letter-spacing:2px; text-transform:uppercase; padding:12px 28px; border:1.5px solid var(--accent); background:transparent; color:var(--accent); cursor:pointer; transition:all 0.2s; }
+.quiz-restart:hover { background:var(--accent); color:var(--paper); }
+
+/* ── INTERACTIVE: INSPIRATION WHEEL ── */
+.inspire-section { padding:100px 80px; background:var(--paper); }
+.inspire-wrap { max-width:700px; margin:0 auto; text-align:center; }
+.inspire-card { background:var(--ink); color:var(--paper); padding:60px 48px; margin:40px 0; position:relative; min-height:220px; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:transform 0.3s; }
+.inspire-card:hover { transform:rotate(-1deg) scale(1.01); }
+.inspire-tag { font-family:'Space Mono',monospace; font-size:10px; letter-spacing:3px; color:var(--accent); text-transform:uppercase; margin-bottom:20px; }
+.inspire-challenge { font-family:'Black Han Sans',sans-serif; font-size:clamp(20px,3vw,32px); line-height:1.4; }
+.inspire-sub { font-family:'Noto Serif KR',serif; font-size:14px; color:var(--faded); margin-top:16px; line-height:1.8; }
+.inspire-corner { position:absolute; font-family:'Space Mono',monospace; font-size:10px; color:rgba(255,255,255,0.15); }
+.inspire-corner.tl { top:16px; left:20px; }
+.inspire-corner.br { bottom:16px; right:20px; }
+.inspire-btn { font-family:'Black Han Sans',sans-serif; font-size:18px; padding:18px 48px; background:var(--accent); color:var(--paper); border:none; cursor:pointer; transition:all 0.2s; letter-spacing:1px; }
+.inspire-btn:hover { background:var(--ink); transform:translate(-3px,-3px); box-shadow:3px 3px 0 var(--accent); }
+.inspire-count { font-family:'Space Mono',monospace; font-size:11px; color:var(--faded); margin-top:16px; }
+
+/* ── SCROLL REVEAL ── */
+.reveal { opacity:0; transform:translateY(30px); transition:opacity 0.7s ease,transform 0.7s ease; }
+.reveal.visible { opacity:1; transform:none; }
+
+/* ── RESPONSIVE ── */
+@media (max-width:768px) {
+  nav { padding:0 24px; }
+  .nav-links { display:none; }
+  .hamburger { display:flex; }
+  .hero { grid-template-columns:1fr; min-height:auto; }
+  .hero-left { padding:60px 32px; }
+  .hero-right { padding:40px 32px; min-height:360px; }
+  .heist-stage { max-width:320px; }
+  .ransom-note .f1, .ransom-note .f2, .ransom-note .f3, .ransom-note .f4 { font-size:18px; }
+  .scrap-1 { font-size:10px; }
+  .scrap-4 { font-size:9px; }
+  .manifesto,.principles,.quote-strip,.blackout-section,.quiz-section,.inspire-section { padding:70px 28px; }
+  .author-section { grid-template-columns:1fr; padding:70px 28px; gap:32px; }
+  .author-portrait { max-width:140px; }
+  .cta-section { padding:70px 28px; }
+  footer { flex-direction:column; gap:12px; text-align:center; padding:28px; }
+  .blackout-controls { flex-direction:column; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="#hero" class="nav-logo">훔쳐<span>✦</span>라</a>
+  <div class="nav-links">
+    <a href="#hero" class="active" data-section="hero">홈</a>
+    <a href="#principles" data-section="principles">10원칙</a>
+    <a href="#blackout" data-section="blackout">신문 시</a>
+    <a href="#quiz" data-section="quiz">창의성 테스트</a>
+    <a href="#inspire" data-section="inspire">영감 생성기</a>
+    <a href="#author" data-section="author">저자</a>
+    <a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=24719673" target="_blank" class="nav-cta">책 구매 →</a>
+  </div>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#hero" onclick="closeMobile()">🏠 홈</a>
+  <a href="#principles" onclick="closeMobile()">📋 10원칙</a>
+  <a href="#blackout" onclick="closeMobile()">✂️ 신문 시 만들기</a>
+  <a href="#quiz" onclick="closeMobile()">🎯 창의성 테스트</a>
+  <a href="#inspire" onclick="closeMobile()">💡 영감 생성기</a>
+  <a href="#author" onclick="closeMobile()">✍️ 저자 소개</a>
+  <a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=24719673" target="_blank">📚 책 구매하기</a>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span>훔쳐라 아티스트처럼</span><span>Steal Like an Artist</span><span>창의성은 훔치는 것이다</span>
+    <span>오스틴 클레온</span><span>Austin Kleon</span><span>아이디어를 재조합하라</span>
+    <span>훔쳐라 아티스트처럼</span><span>Steal Like an Artist</span><span>창의성은 훔치는 것이다</span>
+    <span>오스틴 클레온</span><span>Austin Kleon</span><span>아이디어를 재조합하라</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-left">
+    <div class="stamp">BESTSELLER · 창의성 · 예술</div>
+    <h1 class="hero-title">훔쳐라<span>아티스트</span>처럼</h1>
+    <p class="hero-subtitle">죽어 있던 생각을 아이디어로 바꾸는<br>가장 현실적인 10가지 방법</p>
+    <p class="hero-author">Austin Kleon · 오스틴 클레온</p>
+  </div>
+  <div class="hero-right">
+    <div class="heist-stage">
+      <div class="heist-board"></div>
+
+      <div class="fingerprint fp-1"></div>
+      <div class="fingerprint fp-2"></div>
+
+      <div class="scrap scrap-1">EVIDENCE<br>FILE NO. 073<br>― 오스틴 클레온 ―<br>CREATIVITY THEFT</div>
+      <div class="scrap scrap-2">✂️</div>
+      <div class="scrap scrap-3">★</div>
+      <div class="scrap scrap-4">"좋은 아이디어는<br>훔쳐서, 자르고,<br>다시 붙인 흔적이다."</div>
+      <div class="scrap scrap-5">REMIX<br>IT</div>
+
+      <div class="tape tape-1"></div>
+      <div class="tape tape-2"></div>
+      <div class="tape tape-3"></div>
+
+      <div class="ransom-note">
+        <span class="word f1">훔쳐라</span>
+        <span class="word f2">아티스트</span>
+        <span class="word f3">처럼</span><br>
+        <span class="word f4">STEAL.</span>
+        <span class="word f1">변형하라.</span>
+        <span class="word f2">창조하라.</span>
+      </div>
+
+      <div class="stolen-stamp">STOLEN ✦ GOODS</div>
+    </div>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<section class="manifesto reveal">
+  <p class="manifesto-text">
+    "모든 예술가는 처음에 다른 사람의 작품을 훔친다. 좋은 아티스트는 훔친 것을 숨기고, 위대한 아티스트는 그것을 변형시킨다."
+    <small>— 오스틴 클레온, 『훔쳐라 아티스트처럼』</small>
+  </p>
+</section>
+
+<!-- 10 PRINCIPLES -->
+<section class="principles" id="principles">
+  <div class="section-label">10가지 창의성의 원칙</div>
+  <div class="principles-grid">
+    <div class="principle-card reveal"><div class="principle-num">01 ·</div><div class="principle-title">아티스트처럼 훔쳐라</div><div class="principle-desc">세상에 완전히 독창적인 것은 없다. 모든 창의적인 작업은 이전 작업 위에 세워진다. 영감의 출처를 인정하고 변형하라.</div></div>
+    <div class="principle-card reveal"><div class="principle-num">02 ·</div><div class="principle-title">자신이 누군지 모른다고 두려워 말라</div><div class="principle-desc">자신의 정체성을 찾기 위해 일을 시작하라. 행동을 통해 자신이 누구인지 발견하게 된다.</div></div>
+    <div class="principle-card reveal"><div class="principle-num">03 ·</div><div class="principle-title">손을 더럽혀라 (아날로그로)</div><div class="principle-desc">컴퓨터를 끄고 종이와 연필로 시작하라. 손을 움직이는 것이 뇌를 자극하고 진정한 창의성을 이끌어낸다.</div></div>
+    <div class="principle-card reveal"><div class="principle-num">04 ·</div><div class="principle-title">부업을 숨기지 말라</div><div class="principle-desc">열정을 쫓아라. 취미처럼 보이는 일이 평생의 업이 될 수 있다. 여러 관심사를 가지는 것이 강점이다.</div></div>
+    <div class="principle-card reveal"><div class="principle-num">05 ·</div><div class="principle-title">좋은 작품은 당신 곁에서 나온다</div><div class="principle-desc">영감을 위해 멀리 갈 필요가 없다. 주변의 일상, 이야기, 그리고 삶 속에서 가장 강력한 소재가 나온다.</div></div>
+    <div class="principle-card reveal"><div class="principle-num">06 ·</div><div class="principle-title">비밀은 없다</div><div class="principle-desc">자신의 작업 과정을 공유하라. 인터넷 시대에 투명성은 관객을 만들고 기회를 창출한다.</div></div>
+    <div class="principle-card reveal"><div class="principle-num">07 ·</div><div class="principle-title">지역을 버리되 취향은 지켜라</div><div class="principle-desc">물리적 위치에 구애받지 말되, 자신만의 세계를 만들어라. 창의성에는 경계가 없다.</div></div>
+    <div class="principle-card reveal"><div class="principle-num">08 ·</div><div class="principle-title">친절하라, 세상은 작은 마을이다</div><div class="principle-desc">사람들은 당신의 작품만큼 당신이라는 사람을 기억한다. 진심 어린 관계가 창의적 커리어의 토대가 된다.</div></div>
+    <div class="principle-card reveal"><div class="principle-num">09 ·</div><div class="principle-title">지루함은 허락하라</div><div class="principle-desc">지루함은 창의성의 씨앗이다. 끊임없는 자극 속에서 아이디어는 싹트지 않는다. 멍때리는 시간을 확보하라.</div></div>
+    <div class="principle-card reveal"><div class="principle-num">10 ·</div><div class="principle-title">창의성은 뺄셈이다</div><div class="principle-desc">제약이 자유를 만든다. 경계와 규칙이 없을 때 오히려 아무것도 만들지 못한다. 제한 속에서 창의성이 폭발한다.</div></div>
+  </div>
+</section>
+
+<!-- QUOTES -->
+<section class="quote-strip">
+  <div class="section-label" style="color:rgba(255,255,255,0.3);">명언들</div>
+  <div class="quotes-container">
+    <blockquote class="big-quote">"당신은 자신이 삶에 들어오도록 선택한 것들의 조합이다."</blockquote>
+    <blockquote class="big-quote">"보고 싶은 예술을 그려라. 읽고 싶은 책을 써라. 만들고 싶은 제품을 만들어라."</blockquote>
+    <blockquote class="big-quote">"당신이 가장 재능 있는 사람인 방을 찾는다면, 다른 방을 찾아야 한다."</blockquote>
+  </div>
+</section>
+
+<!-- ★ NEWSPAPER BLACKOUT ★ -->
+<section class="blackout-section" id="blackout">
+  <div class="section-label">신문 시 만들기 체험</div>
+  <div class="blackout-area">
+    <p class="blackout-instruction">단어를 클릭해서 지우거나 남겨보세요 — 나만의 시를 만들어 보세요 ✂️</p>
+
+    <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+      <button class="blackout-btn active" id="mode-black" onclick="setMode('black')">✦ 지우기 모드</button>
+      <button class="blackout-btn" id="mode-keep" onclick="setMode('keep')">★ 남기기 모드</button>
+      <button class="blackout-btn" onclick="resetBlackout()" style="margin-left:auto;">↺ 초기화</button>
+      <button class="blackout-btn" onclick="showPoem()" style="background:var(--accent);color:var(--paper);border-color:var(--accent);">시 보기 →</button>
+    </div>
+
+    <div class="blackout-text" id="blackout-text"></div>
+    <div class="blackout-poem" id="blackout-poem"></div>
+  </div>
+</section>
+
+<!-- ★ CREATIVITY QUIZ ★ -->
+<section class="quiz-section" id="quiz">
+  <div class="section-label" style="color:rgba(255,255,255,0.25);">나의 창의성 유형 테스트</div>
+  <div class="quiz-wrap">
+    <div id="quiz-progress" class="quiz-progress"></div>
+    <div id="quiz-question" class="quiz-q"></div>
+    <div id="quiz-options" class="quiz-options"></div>
+    <div id="quiz-result" class="quiz-result">
+      <div class="quiz-result-type" id="result-type"></div>
+      <div class="quiz-result-desc" id="result-desc"></div>
+      <button class="quiz-restart" onclick="startQuiz()">↺ 다시 하기</button>
+    </div>
+  </div>
+</section>
+
+<!-- ★ INSPIRATION GENERATOR ★ -->
+<section class="inspire-section" id="inspire">
+  <div class="section-label">오늘의 창의적 도전</div>
+  <div class="inspire-wrap">
+    <p style="font-family:'Space Mono',monospace;font-size:12px;color:var(--faded);letter-spacing:1px;margin-bottom:8px;">버튼을 눌러 오늘의 창의적 도전을 받아보세요</p>
+    <div class="inspire-card" id="inspire-card">
+      <div class="inspire-corner tl">✦ CHALLENGE</div>
+      <div class="inspire-tag" id="inspire-tag">창의성</div>
+      <div class="inspire-challenge" id="inspire-challenge">버튼을 눌러 시작하세요</div>
+      <div class="inspire-sub" id="inspire-sub">매일 새로운 창의적 도전이 기다리고 있습니다</div>
+      <div class="inspire-corner br" id="inspire-num">#000</div>
+    </div>
+    <button class="inspire-btn" onclick="newInspiration()">새 도전 뽑기 ✦</button>
+    <p class="inspire-count" id="inspire-count"></p>
+  </div>
+</section>
+
+<!-- AUTHOR -->
+<section class="author-section reveal" id="author">
+  <div class="author-portrait">✍️</div>
+  <div>
+    <div class="section-label">저자 소개</div>
+    <h2 class="author-name">오스틴 클레온</h2>
+    <p class="author-bio">오스틴 클레온은 작가이자 아티스트로, 텍사스 오스틴에서 활동하고 있습니다. 신문 기사에서 단어들을 검게 지워 시를 만드는 "신문 시(Newspaper Blackout)"로 유명하며, 창의성과 예술에 관한 통찰력 있는 강연과 저술로 전 세계 수백만 명에게 영감을 주고 있습니다.<br><br>『훔쳐라 아티스트처럼』은 그의 첫 번째 베스트셀러로, 영어 원서 기준 100만 부 이상 판매되었으며 전 세계 20개국 이상에서 번역 출판되었습니다.</p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section reveal">
+  <div class="cta-bg-text">STEAL</div>
+  <p class="cta-label">지금 시작하라</p>
+  <h2 class="cta-title">당신의 창의성을<br>깨울 시간</h2>
+  <div class="cta-buttons">
+    <a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=24719673" target="_blank" class="btn btn-primary">책 구매하기 →</a>
+    <a href="https://austinkleon.com/steal/" target="_blank" class="btn btn-outline">공식 사이트</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p class="footer-logo">훔쳐라 ✦</p>
+  <p>© Austin Kleon · 중앙북스 · 2013</p>
+  <p>FAN-MADE · Non-commercial</p>
+</footer>
+
+<script>
+/* ── NAV ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 40);
+  const sections = ['hero','principles','blackout','quiz','inspire','author'];
+  let cur = 'hero';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 100) cur = id;
+  });
+  document.querySelectorAll('.nav-links a[data-section]').forEach(a => {
+    a.classList.toggle('active', a.dataset.section === cur);
+  });
+});
+document.getElementById('hamburger').onclick = () => {
+  document.getElementById('mobile-menu').classList.toggle('open');
+};
+function closeMobile() { document.getElementById('mobile-menu').classList.remove('open'); }
+
+/* ── SCROLL REVEAL ── */
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');revealObs.unobserve(e.target);} });
+}, {threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ── SPARKLE CURSOR ── */
+const sparkStyle = document.createElement('style');
+sparkStyle.textContent = `@keyframes sparkle{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-80px) scale(0)}}`;
+document.head.appendChild(sparkStyle);
+document.addEventListener('mousemove', e => {
+  if(Math.random() > 0.87) {
+    const el = document.createElement('div');
+    el.style.cssText = `position:fixed;pointer-events:none;z-index:9998;left:${e.clientX}px;top:${e.clientY}px;width:6px;height:6px;background:${Math.random()>.5?'#d64e12':'#f2c94c'};border-radius:50%;transform:translate(-50%,-50%);animation:sparkle 0.6s forwards;`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),600);
+  }
+});
+
+/* ── NEWSPAPER BLACKOUT ── */
+const passage = `창의성은 훔치는 것에서 시작된다. 아티스트는 세상을 수집한다. 그들은 길을 걸으며 소리를 듣고 색깔을 본다. 책 속의 문장을 노트에 적고 낯선 풍경을 사진으로 남긴다. 두려움 없이 영감을 가져와 자신의 방식으로 변형한다. 모방은 창조의 어머니다. 당신이 좋아하는 것을 만들어라. 세상에 없던 것이 탄생한다. 지금 당장 시작하라. 완벽함은 없다. 오직 시작만이 있을 뿐이다. 아이디어는 연결이다. 전혀 다른 두 가지가 만날 때 새로운 것이 태어난다.`;
+
+let blackoutMode = 'black';
+function setMode(m) {
+  blackoutMode = m;
+  document.getElementById('mode-black').classList.toggle('active', m==='black');
+  document.getElementById('mode-keep').classList.toggle('active', m==='keep');
+}
+function buildBlackout() {
+  const container = document.getElementById('blackout-text');
+  container.innerHTML = '';
+  passage.split(/(\s+)/).forEach(token => {
+    if(/\s+/.test(token)) { container.appendChild(document.createTextNode(token)); return; }
+    const span = document.createElement('span');
+    span.className = 'word';
+    span.textContent = token;
+    span.onclick = () => {
+      if(blackoutMode === 'black') {
+        span.classList.toggle('blacked');
+        if(span.classList.contains('blacked')) span.classList.remove('kept');
+      } else {
+        span.classList.toggle('kept');
+        if(span.classList.contains('kept')) span.classList.remove('blacked');
+      }
+    };
+    container.appendChild(span);
+  });
+}
+function resetBlackout() {
+  document.querySelectorAll('.word').forEach(w => w.className='word');
+  document.getElementById('blackout-poem').classList.remove('visible');
+}
+function showPoem() {
+  const kept = [...document.querySelectorAll('.word.kept')].map(w=>w.textContent);
+  const poem = document.getElementById('blackout-poem');
+  if(!kept.length) { poem.textContent = '★ 남기고 싶은 단어를 먼저 선택하세요 (남기기 모드).'; poem.classList.add('visible'); return; }
+  poem.innerHTML = `<span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent);display:block;margin-bottom:12px;">— 나의 신문 시 —</span>${kept.join(' ')}`;
+  poem.classList.add('visible');
+  poem.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+buildBlackout();
+
+/* ── CREATIVITY QUIZ ── */
+const questions = [
+  { q:"새로운 아이디어가 떠오를 때 당신은?", opts:["바로 메모장에 적는다","머릿속에서 충분히 키운 후 기록한다","친구에게 바로 이야기한다","일단 행동으로 옮겨본다"], scores:[0,1,2,3] },
+  { q:"가장 편한 작업 환경은?", opts:["혼자만의 고요한 공간","카페 같은 약간의 소음","팀과 함께하는 활기찬 곳","장소는 상관없다, 어디서든 작업한다"], scores:[1,0,2,3] },
+  { q:"당신의 창작물에서 영감을 받는 주된 원천은?", opts:["책과 예술 작품","자연과 여행","사람들과의 대화","자신의 내면과 감정"], scores:[0,2,3,1] },
+  { q:"창의적 슬럼프에 빠졌을 때 당신은?", opts:["억지로라도 매일 조금씩 작업한다","완전히 쉬며 충전한다","새로운 취미나 활동을 시도한다","다른 사람의 작품을 많이 감상한다"], scores:[3,1,2,0] },
+  { q:"당신에게 '훔친다'는 것은?", opts:["영감을 받아 내 방식으로 재해석하는 것","여러 요소를 합쳐 새로운 것을 만드는 것","좋아하는 것을 따라 하면서 배우는 것","세상 모든 것에서 아이디어를 수집하는 것"], scores:[1,3,0,2] }
+];
+const types = [
+  { name:"🔬 분석형 창작자", desc:"당신은 깊이 생각하고 연구하며 창작합니다. 풍부한 레퍼런스와 체계적 접근으로 독창적인 세계를 구축하는 타입. 당신의 창의성은 지식의 깊이에서 나옵니다." },
+  { name:"🌿 직관형 아티스트", desc:"내면의 목소리를 따라 창작하는 당신. 감성과 직관이 발달해 있으며, 조용한 환경에서 깊은 창의성이 피어납니다. 자신만의 독특한 세계관이 가장 큰 무기입니다." },
+  { name:"🌊 연결형 창조자", desc:"사람과 경험을 통해 아이디어를 얻는 당신. 다양한 인풋을 자유롭게 연결해 새로운 것을 만드는 데 탁월합니다. 협업과 공유가 창의성의 핵심입니다." },
+  { name:"⚡ 행동형 실험가", desc:"생각보다 실행이 먼저인 당신. 일단 만들고 수정하는 반복 과정에서 최고의 창의성이 발휘됩니다. 실패를 두려워하지 않는 용기가 가장 큰 강점입니다." }
+];
+
+let qIdx = 0, scores = [0,0,0,0];
+function startQuiz() {
+  qIdx = 0; scores = [0,0,0,0];
+  document.getElementById('quiz-result').classList.remove('visible');
+  document.getElementById('quiz-question').style.display = '';
+  document.getElementById('quiz-options').style.display = '';
+  document.getElementById('quiz-progress').style.display = '';
+  renderQuestion();
+}
+function renderQuestion() {
+  const prog = document.getElementById('quiz-progress');
+  prog.innerHTML = questions.map((_,i) => `<div class="quiz-dot ${i<qIdx?'done':i===qIdx?'current':''}"></div>`).join('');
+  const q = questions[qIdx];
+  document.getElementById('quiz-question').textContent = `Q${qIdx+1}. ${q.q}`;
+  document.getElementById('quiz-options').innerHTML = q.opts.map((o,i) =>
+    `<button class="quiz-opt" onclick="answer(${i})">${o}</button>`
+  ).join('');
+}
+function answer(i) {
+  scores[questions[qIdx].scores[i]]++;
+  qIdx++;
+  if(qIdx >= questions.length) showResult();
+  else { document.querySelectorAll('.quiz-opt')[i].classList.add('selected'); setTimeout(renderQuestion,400); }
+}
+function showResult() {
+  const best = scores.indexOf(Math.max(...scores));
+  document.getElementById('quiz-question').style.display = 'none';
+  document.getElementById('quiz-options').style.display = 'none';
+  document.getElementById('quiz-progress').style.display = 'none';
+  document.getElementById('result-type').textContent = types[best].name;
+  document.getElementById('result-desc').textContent = types[best].desc;
+  document.getElementById('quiz-result').classList.add('visible');
+}
+startQuiz();
+
+/* ── INSPIRATION GENERATOR ── */
+const challenges = [
+  { tag:"✂️ 신문 시", ch:"오늘 신문이나 잡지를 열어 마음에 드는 단어 10개를 오려 새 문장을 만드세요.", sub:"오스틴 클레온의 시그니처 창작 방식입니다" },
+  { tag:"🎨 제약 창작", ch:"오늘 딱 하나의 색깔만 사용해서 무언가를 그리거나 꾸며보세요.", sub:"제약은 자유를 만든다 — 원칙 10" },
+  { tag:"📝 카피캣 훈련", ch:"당신이 가장 존경하는 창작자의 스타일로 짧은 글이나 그림을 따라 만들어보세요.", sub:"모방에서 배우고, 변형으로 나아가라" },
+  { tag:"👁️ 콜렉터 도전", ch:"오늘 하루 길에서 발견한 아름다운 것 5가지를 사진으로 기록하세요.", sub:"아티스트는 세상을 수집하는 사람이다" },
+  { tag:"🤝 공유 실험", ch:"지금 하고 있는 작업의 과정 사진 또는 메모를 SNS나 친구에게 공유해보세요.", sub:"비밀 없이 공유하는 것이 창의성을 키운다" },
+  { tag:"🔀 무작위 연결", ch:"사전에서 단어 두 개를 무작위로 골라 그 둘을 연결한 아이디어를 만들어보세요.", sub:"창의성은 예상치 못한 연결에서 탄생한다" },
+  { tag:"⏰ 5분 드로잉", ch:"타이머를 5분으로 맞추고 눈 앞에 있는 물건을 스케치해보세요. 잘 그릴 필요 없습니다.", sub:"손을 더럽혀라 — 원칙 3" },
+  { tag:"📚 역방향 독서", ch:"책 한 권을 마지막 페이지부터 거꾸로 읽어보세요. 어떤 다른 의미가 보이나요?", sub:"다른 시각으로 보는 것도 훔치는 방법이다" },
+  { tag:"💭 멍때리기", ch:"지금 당장 20분 동안 아무것도 하지 마세요. 폰도, 음악도 없이.", sub:"지루함은 창의성의 씨앗이다 — 원칙 9" },
+  { tag:"🗂️ 영감 파일", ch:"오늘 만난 인상적인 것들을 모아 나만의 영감 폴더나 노트를 만들어보세요.", sub:"아티스트는 수집가다, 저장하라" },
+  { tag:"🎭 역할극 글쓰기", ch:"당신이 존경하는 인물이 되어 오늘 하루를 일기로 써보세요.", sub:"당신의 영웅처럼 생각하라" },
+  { tag:"🌀 뺄셈 프로젝트", ch:"기존에 만들던 작품에서 요소를 하나씩 빼보며 더 좋아지는지 확인해보세요.", sub:"창의성은 뺄셈이다 — 원칙 10" },
+];
+let usedIdx = [];
+function newInspiration() {
+  if(usedIdx.length >= challenges.length) usedIdx = [];
+  let idx;
+  do { idx = Math.floor(Math.random()*challenges.length); } while(usedIdx.includes(idx));
+  usedIdx.push(idx);
+  const c = challenges[idx];
+  const card = document.getElementById('inspire-card');
+  card.style.opacity = '0'; card.style.transform = 'rotate(-1deg) scale(0.97)';
+  setTimeout(() => {
+    document.getElementById('inspire-tag').textContent = c.tag;
+    document.getElementById('inspire-challenge').textContent = c.ch;
+    document.getElementById('inspire-sub').textContent = c.sub;
+    document.getElementById('inspire-num').textContent = `#${String(idx+1).padStart(3,'0')}`;
+    card.style.opacity = '1'; card.style.transform = 'rotate(-1deg) scale(1)';
+  }, 220);
+  card.style.transition = 'opacity 0.22s,transform 0.22s';
+  document.getElementById('inspire-count').textContent = `${usedIdx.length} / ${challenges.length} 도전 확인됨`;
+}
+newInspiration();
+</script>
+</body>
+</html>
